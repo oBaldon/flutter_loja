@@ -1,16 +1,15 @@
 # flutter_application
 
-A new Flutter project.
+Projeto - Programação de Dispositivos Móveis
 
-## Getting Started
+## Divisão de tarefas
 
-This project is a starting point for a Flutter application.
+- O molde do software e suas primeiras telas foram desenvolvidos por ambos da dupla;
+- Ambos trabalharam refatorando o código para manter o padrão MVC;
+- O esquema da página inicial da loja e do carrinho foi desenvolvido por Douglas;
+- O login e a validação foram desenvolvidos por Yasmin;
 
-A few resources to get you started if this is your first Flutter project:
+### Alunos
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Douglas Baldon 1661809
+- Yasmin Riemer 2165228
