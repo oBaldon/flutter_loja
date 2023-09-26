@@ -1,64 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/controller/cadastrar_usuario_controller.dart';
 import 'package:flutter_application/models/usuario.dart';
-import 'package:flutter_application/pages/cadastrar_usuario_page.dart';
-import 'package:flutter_application/pages/usuario_page.dart';
-import 'package:flutter_application/controller/login_controller.dart';
 import 'package:flutter_application/repositories/usuario_repository.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class CadastrarUsuarioPage extends StatefulWidget {
+  const CadastrarUsuarioPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  _CadastrarUsuarioPageState createState() => _CadastrarUsuarioPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  String? emailValido, senhaValida;
-
-  final users = UsuarioRepository.tabelaUser;
+class _CadastrarUsuarioPageState extends State<CadastrarUsuarioPage> {
+  String? emailValido, senhaValida, nomeValido;
 
   final _form = GlobalKey<FormState>();
-  final LoginController _loginController = LoginController();
+  final CadastrarUsuarioController _cadastrarUserController =
+      CadastrarUsuarioController();
 
-  logar() {
-    Usuario autenticado = Usuario(
-      icone: '',
-      nome: '',
-      email: '',
-      senha: '',
-    );
-
+  cadastrarUsuario() {
     if (_form.currentState!.validate()) {
-      for (var usuario in users) {
-        if (usuario.email == _loginController.emailController.text &&
-            usuario.senha == _loginController.senhaController.text) {
-          autenticado = usuario;
-          break;
-        }
-      }
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => UsuarioPage(usuario: autenticado),
+      Usuario novoUsuario = Usuario(
+        icone: 'images/person.png',
+        nome: _cadastrarUserController.nomeController.text,
+        email: _cadastrarUserController.emailController.text,
+        senha: _cadastrarUserController.senhaController.text,
+      );
+
+      UsuarioRepository.tabelaUser.add(novoUsuario);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Usuário cadastrado com sucesso!'),
         ),
       );
     }
-  }
-
-  cadastrarNovoUsuario() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => CadastrarUsuarioPage(),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meu Perfil'),
+        title: Text('Entrar como novo usuario'),
       ),
       body: Padding(
         padding: EdgeInsets.all(24),
@@ -72,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Container(width: 10),
                   Text(
-                    'Logar',
+                    'Registrar-se',
                     style: TextStyle(fontSize: 24),
                   ),
                 ],
@@ -82,9 +64,24 @@ class _LoginPageState extends State<LoginPage> {
               key: _form,
               child: Column(
                 children: [
+                  // Campo nome
+                  TextFormField(
+                    controller: _cadastrarUserController.nomeController,
+                    style: TextStyle(fontSize: 18),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Nome',
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      return _cadastrarUserController.validateNome(value);
+                    },
+                  ),
+                  SizedBox(height: 16),
                   // Campo email
                   TextFormField(
-                    controller: _loginController.emailController,
+                    controller: _cadastrarUserController.emailController,
                     style: TextStyle(fontSize: 18),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
@@ -93,13 +90,13 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
-                      return _loginController.validateEmail(value);
+                      return _cadastrarUserController.validateEmail(value);
                     },
                   ),
                   SizedBox(height: 16),
                   //Campo senha
                   TextFormField(
-                    controller: _loginController.senhaController,
+                    controller: _cadastrarUserController.senhaController,
                     style: TextStyle(fontSize: 18),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
@@ -108,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     obscureText: true,
                     validator: (value) {
-                      return _loginController.validateSenha(value);
+                      return _cadastrarUserController.validateSenha(value);
                     },
                   ),
                 ],
@@ -118,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
               alignment: Alignment.bottomCenter,
               margin: EdgeInsets.only(top: 24),
               child: ElevatedButton(
-                onPressed: logar,
+                onPressed: cadastrarUsuario,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -126,29 +123,12 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: EdgeInsets.all(16),
                       child: Text(
-                        'Entrar',
+                        'Enviar',
                         style: TextStyle(fontSize: 20),
                       ),
                     )
                   ],
                 ),
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: cadastrarNovoUsuario,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.person_add),
-                  Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      'Cadastrar-se',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  )
-                ],
               ),
             ),
           ],
