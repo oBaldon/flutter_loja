@@ -12,22 +12,28 @@ class LoginController {
     if (value == null || value.isEmpty) {
       return 'Informe um e-mail';
     } else {
-      bool emailValid = RegExp(r"/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i")
-          .hasMatch(value);
-      if (emailValid) {
-        return "E-mail valido";
+      for (var usuario in users) {
+        if (usuario.email != value) {
+          return 'E-mail não cadastrado';
+        } else {
+          return null;
+        }
       }
     }
-
-    return null;
   }
 
   String? validateSenha(String? value) {
     if (value == null || value.isEmpty) {
       return 'Informe uma senha';
+    } else {
+      for (var usuario in users) {
+        if (usuario.senha != value) {
+          return 'Senha incorreta';
+        } else {
+          return null;
+        }
+      }
     }
-    //mais validações de senha
-    return null;
   }
 
   void dispose() {

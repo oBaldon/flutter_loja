@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/pages/store_page.dart';
-import 'package:flutter_application/pages/usuario_page.dart';
+import 'package:flutter_application/pages/login_page.dart';
 import 'package:flutter_application/models/produto.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
         controller: paginaController,
         children: [
           StorePage(),
-          UsuarioPage(),
+          LoginPage(),
           //CarrinhoPage(carrinho: carrinho),
         ],
         onPageChanged: setPaginaAtual,
