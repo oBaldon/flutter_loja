@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application/pages/carrinho_page.dart';
-import 'package:flutter_application/pages/produto_detalhes_page.dart';
-import 'package:flutter_application/repositories/produto_repository.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter_application/models/produto.dart';
+import 'package:flutter_application/controller/store_controller.dart';
 
 class StorePage extends StatefulWidget {
   StorePage({super.key});
@@ -13,14 +9,18 @@ class StorePage extends StatefulWidget {
 }
 
 class _StorePageState extends State<StorePage> {
-  final tabela = ProdutoRepository.tabela;
+  final controller = StoreController();
 
-  NumberFormat real = NumberFormat.currency(locale: 'pt_BR', name: 'R\$');
+  @override
+  void initState() {
+    super.initState();
+    controller.onSelectionChanged = () {
+      setState(() {});
+    };
+  }
 
-  List<Produto> selecionados = [];
-
-  appBarDinamica() {
-    if (selecionados.isEmpty) {
+  AppBar appBarDinamica() {
+    if (controller.selecionados.isEmpty) {
       return AppBar(
         title: Text('Produtos'),
       );
@@ -30,39 +30,13 @@ class _StorePageState extends State<StorePage> {
           icon: Icon(Icons.close),
           onPressed: () {
             setState(() {
-              selecionados = [];
+              controller.selecionados = [];
             });
           },
         ),
-        title: Text('${selecionados.length} selecionados'),
+        title: Text('${controller.selecionados.length} selecionados'),
       );
     }
-  }
-
-  mostrarDetalhes(Produto produto) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ProdutoDetalhesPage(produto: produto),
-      ),
-    );
-  }
-
-  setStateProdutos(int produto) {
-    setState(() {
-      (selecionados.contains(tabela[produto]))
-          ? selecionados.remove(tabela[produto])
-          : selecionados.add(tabela[produto]);
-    });
-  }
-
-  checkoutCarrinho(List<Produto> selecionados) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => CarrinhoPage(carrinho: selecionados),
-      ),
-    );
   }
 
   @override
@@ -74,48 +48,50 @@ class _StorePageState extends State<StorePage> {
           return ListTile(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(12))),
-            leading: (selecionados.contains(tabela[produto]))
-                ? CircleAvatar(
-                    child: Icon(Icons.check),
-                  )
-                : SizedBox(
-                    child: Image.asset(tabela[produto].icone),
-                    width: 40,
-                  ),
+            leading:
+                (controller.selecionados.contains(controller.tabela[produto]))
+                    ? CircleAvatar(
+                        child: Icon(Icons.check),
+                      )
+                    : SizedBox(
+                        child: Image.asset(controller.tabela[produto].icone),
+                        width: 40,
+                      ),
             title: Text(
-              tabela[produto].nome,
+              controller.tabela[produto].nome,
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w500,
               ),
             ),
             trailing: Text(
-              real.format(tabela[produto].preco),
+              controller.real.format(controller.tabela[produto].preco),
             ),
-            selected: selecionados.contains(tabela[produto]),
+            selected:
+                controller.selecionados.contains(controller.tabela[produto]),
             selectedTileColor: Colors.blueGrey[50],
             onTap: () {
-              if (selecionados.isNotEmpty) {
-                setStateProdutos(produto);
+              if (controller.selecionados.isNotEmpty) {
+                controller.setStateProdutos(produto);
               } else {
-                mostrarDetalhes(tabela[produto]);
+                controller.mostrarDetalhes(context, controller.tabela[produto]);
               }
             },
             onLongPress: () {
-              if (selecionados.isEmpty) {
-                setStateProdutos(produto);
+              if (controller.selecionados.isEmpty) {
+                controller.setStateProdutos(produto);
               }
             },
           );
         },
         padding: EdgeInsets.all(16),
         separatorBuilder: (_, __) => Divider(),
-        itemCount: tabela.length,
+        itemCount: controller.tabela.length,
       ),
-      floatingActionButton: selecionados.isNotEmpty
+      floatingActionButton: controller.selecionados.isNotEmpty
           ? FloatingActionButton.extended(
               onPressed: () {
-                checkoutCarrinho(selecionados);
+                controller.checkoutCarrinho(context, controller.selecionados);
               },
               label: Icon(Icons.add_shopping_cart),
             )
