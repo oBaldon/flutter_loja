@@ -20,6 +20,7 @@ class LoginController {
         }
       }
     }
+    return null;
   }
 
   String? validateSenha(String? value) {
@@ -34,6 +35,7 @@ class LoginController {
         }
       }
     }
+    return null;
   }
 
   void dispose() {
