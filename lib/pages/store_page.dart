@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application/controller/store_controller.dart';
+import 'package:flutter_application/controllers/store_controller.dart';
 
 class StorePage extends StatefulWidget {
-  StorePage({super.key});
+  StorePage({Key? key}) : super(key: key);
 
   @override
   State<StorePage> createState() => _StorePageState();
@@ -10,7 +10,6 @@ class StorePage extends StatefulWidget {
 
 class _StorePageState extends State<StorePage> {
   final controller = StoreController();
-
   @override
   void initState() {
     super.initState();
@@ -30,7 +29,7 @@ class _StorePageState extends State<StorePage> {
           icon: Icon(Icons.close),
           onPressed: () {
             setState(() {
-              controller.selecionados = [];
+              controller.selecionados.clear();
             });
           },
         ),
@@ -91,7 +90,7 @@ class _StorePageState extends State<StorePage> {
       floatingActionButton: controller.selecionados.isNotEmpty
           ? FloatingActionButton.extended(
               onPressed: () {
-                controller.checkoutCarrinho(context, controller.selecionados);
+                controller.checkoutCarrinho(context);
               },
               label: Icon(Icons.add_shopping_cart),
             )

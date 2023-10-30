@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application/controller/cadastrar_usuario_controller.dart';
+import 'package:flutter_application/controllers/cadastrar_usuario_controller.dart';
 import 'package:flutter_application/models/usuario.dart';
 import 'package:flutter_application/repositories/usuario_repository.dart';
 
