@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/pages/carrinho_page.dart';
 import 'package:flutter_application/pages/produto_detalhes_page.dart';
+import 'package:flutter_application/repositories/carrinho_repository.dart';
 import 'package:flutter_application/repositories/produto_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application/models/produto.dart';
+import 'package:provider/provider.dart';
 
 class StoreController {
   final tabela = ProdutoRepository.tabela;
+  late CarrinhoRepository carrinho;
+  final List<Produto> selecionados = [];
 
   NumberFormat real = NumberFormat.currency(locale: 'pt_BR', name: 'R\$');
-
-  List<Produto> selecionados = [];
 
   late Function() onSelectionChanged;
   void setStateProdutos(int produto) {
@@ -31,11 +33,13 @@ class StoreController {
     );
   }
 
-  void checkoutCarrinho(BuildContext context, List<Produto> selecionados) {
+  void checkoutCarrinho(BuildContext context) {
+    carrinho = Provider.of<CarrinhoRepository>(context, listen: false);
+    carrinho.saveAll(selecionados);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => CarrinhoPage(carrinho: selecionados),
+        builder: (_) => CarrinhoPage(),
       ),
     );
   }

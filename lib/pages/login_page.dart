@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application/models/usuario.dart';
 import 'package:flutter_application/pages/cadastrar_usuario_page.dart';
 import 'package:flutter_application/pages/usuario_page.dart';
-import 'package:flutter_application/controller/login_controller.dart';
+import 'package:flutter_application/controllers/login_controller.dart';
 import 'package:flutter_application/repositories/usuario_repository.dart';
 
 class LoginPage extends StatefulWidget {
