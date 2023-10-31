@@ -36,7 +36,6 @@ class StoreController {
   void checkoutCarrinho(BuildContext context) {
     carrinho = Provider.of<CarrinhoRepository>(context, listen: false);
     carrinho.saveAll(selecionados);
-    selecionados.clear();
     Navigator.push(
       context,
       MaterialPageRoute(
