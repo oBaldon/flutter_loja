@@ -9,6 +9,11 @@ Projeto - Programação de Dispositivos Móveis
 - O esquema da página inicial da loja e do carrinho foi desenvolvido por Douglas;
 - O login e a validação foram desenvolvidos por Yasmin;
 
+## Divisão de tarefas para entrega 2
+
+- Douglas trabalhou nas correções da primeira parte;
+- Yasmin implementou o novo login e integração com Firebase;
+
 ### Alunos
 
 - Douglas Baldon 1661809
