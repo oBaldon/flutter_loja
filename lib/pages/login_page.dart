@@ -1,157 +1,212 @@
+import 'package:flutter_application/services/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application/models/usuario.dart';
-import 'package:flutter_application/pages/cadastrar_usuario_page.dart';
-import 'package:flutter_application/pages/usuario_page.dart';
-import 'package:flutter_application/controllers/login_controller.dart';
-import 'package:flutter_application/repositories/usuario_repository.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String? emailValido, senhaValida;
+  final formKey = GlobalKey<FormState>();
+  final email = TextEditingController();
+  final senha = TextEditingController();
 
-  final users = UsuarioRepository.tabelaUser;
+  bool isLogin = true;
+  late String titulo;
+  late String botao;
+  late String txtBotao;
+  bool loading = false;
 
-  final _form = GlobalKey<FormState>();
-  final LoginController _loginController = LoginController();
+  @override
+  void initState() {
+    super.initState();
+    setFormAction(true);
+  }
 
-  logar() {
-    Usuario autenticado = Usuario(
-      icone: '',
-      nome: '',
-      email: '',
-      senha: '',
-    );
-
-    if (_form.currentState!.validate()) {
-      for (var usuario in users) {
-        if (usuario.email == _loginController.emailController.text &&
-            usuario.senha == _loginController.senhaController.text) {
-          autenticado = usuario;
-          break;
-        }
+  setFormAction(bool acao) {
+    setState(() {
+      isLogin = acao;
+      if (isLogin) {
+        titulo = 'Bem vindo';
+        botao = 'Login';
+        txtBotao = 'Não possui uma conta? Cadastre-se';
+      } else {
+        titulo = 'Crie sua conta';
+        botao = 'Cadastrar';
+        txtBotao = 'Voltar ao Login';
       }
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => UsuarioPage(usuario: autenticado),
-        ),
-      );
+    });
+  }
+
+  login() async {
+    setState(() => loading = true);
+    try {
+      await context.read<AuthService>().login(email.text, senha.text);
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
     }
   }
 
-  cadastrarNovoUsuario() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => CadastrarUsuarioPage(),
-      ),
-    );
+  registrar() async {
+    setState(() => loading = true);
+    try {
+      await context.read<AuthService>().registrar(email.text, senha.text);
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Meu Perfil'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(24),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(width: 10),
-                  Text(
-                    'Logar',
-                    style: TextStyle(fontSize: 24),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(top: 100),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  titulo,
+                  style: TextStyle(
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -1.5,
                   ),
-                ],
-              ),
-            ),
-            Form(
-              key: _form,
-              child: Column(
-                children: [
-                  // Campo email
-                  TextFormField(
-                    controller: _loginController.emailController,
-                    style: TextStyle(fontSize: 18),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(24),
+                  child: TextFormField(
+                    controller: email,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'E-mail',
-                      prefixIcon: Icon(Icons.email_sharp),
+                      labelText: 'Email',
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
-                      return _loginController.validateEmail(value);
+                      if (value!.isEmpty) {
+                        return 'Informe o email!';
+                      }
+                      return null;
                     },
                   ),
-                  SizedBox(height: 16),
-                  //Campo senha
-                  TextFormField(
-                    controller: _loginController.senhaController,
-                    style: TextStyle(fontSize: 18),
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                  child: TextFormField(
+                    controller: senha,
+                    obscureText: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Senha',
-                      prefixIcon: Icon(Icons.lock),
                     ),
-                    obscureText: true,
                     validator: (value) {
-                      return _loginController.validateSenha(value);
+                      if (value!.isEmpty) {
+                        return 'Informa sua senha!';
+                      } else if (value.length < 6) {
+                        return 'Sua senha deve ter no mínimo 6 caracteres';
+                      }
+                      return null;
                     },
                   ),
-                ],
-              ),
-            ),
-            Container(
-              alignment: Alignment.bottomCenter,
-              margin: EdgeInsets.only(top: 24),
-              child: ElevatedButton(
-                onPressed: logar,
-                child: Row(
+                ),
+                Padding(
+                  padding: EdgeInsets.all(24.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        if (isLogin) {
+                          login();
+                        } else {
+                          registrar();
+                        }
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: (loading)
+                          ? [
+                              Padding(
+                                padding: EdgeInsets.all(16),
+                                child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )
+                            ]
+                          : [
+                              Icon(Icons.check),
+                              Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Text(
+                                  botao,
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                            ],
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => setFormAction(!isLogin),
+                  child: Text(txtBotao),
+                ),
+                const SizedBox(height: 50),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 0.5,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(
+                          'Ou entre como:',
+                          style: TextStyle(color: Colors.grey[700]),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 0.5,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 50),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.check),
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        'Entrar',
-                        style: TextStyle(fontSize: 20),
+                    GestureDetector(
+                      onTap: () => AuthService().signInWithGoogle(),
+                      child: Image(
+                        image: AssetImage('images/google.png'),
+                        width: 100,
+                        height: 100,
                       ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: cadastrarNovoUsuario,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.person_add),
-                  Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      'Cadastrar-se',
-                      style: TextStyle(fontSize: 20),
                     ),
-                  )
-                ],
-              ),
+                  ],
+                )
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

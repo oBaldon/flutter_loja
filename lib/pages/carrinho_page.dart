@@ -23,44 +23,49 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
       appBar: AppBar(
         title: Text('Carrinho'),
       ),
-      body: ListView.separated(
-        itemBuilder: (BuildContext context, int produto) {
-          return ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
+      body: carrinho.lista.isEmpty
+          ? Center(
+              child: Text('Carrinho vazio!'),
+            )
+          : ListView.separated(
+              itemBuilder: (BuildContext context, int produto) {
+                return ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  leading: Image.asset(carrinho.lista[produto].icone),
+                  title: Text(
+                    carrinho.lista[produto].nome,
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  subtitle: Row(
+                    children: [
+                      Text(
+                        real.format(carrinho.lista[produto].preco),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () {
+                          controller.atualizarCarrinho(
+                              context, carrinho.lista[produto]);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+              padding: EdgeInsets.all(16),
+              separatorBuilder: (_, __) => Divider(),
+              itemCount: carrinho.lista.length,
             ),
-            leading: Image.asset(carrinho.lista[produto].icone),
-            title: Text(
-              carrinho.lista[produto].nome,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            subtitle: Row(
-              children: [
-                Text(
-                  real.format(carrinho.lista[produto].preco),
-                ),
-                IconButton(
-                  icon: Icon(Icons.close), // Ícone "X" para remoção
-                  onPressed: () {
-                    controller.atualizarCarrinho(
-                        context, carrinho.lista[produto]);
-                  },
-                ),
-              ],
-            ),
-          );
-        },
-        padding: EdgeInsets.all(16),
-        separatorBuilder: (_, __) => Divider(),
-        itemCount: carrinho.lista.length,
-      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          carrinho.removeAll(carrinho.lista);
           final snackBar = SnackBar(
-            content: Text('COMPROU'),
+            content: Text('Todos os produtos foram removidos do carrinho'),
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         },
