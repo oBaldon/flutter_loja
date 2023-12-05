@@ -14,6 +14,24 @@ Projeto - Programação de Dispositivos Móveis
 - Douglas trabalhou nas correções da primeira parte;
 - Yasmin implementou o novo login e integração com Firebase;
 
+## Divisão de tarefas para entrega 3
+
+- A API e a conexão foram feitas por Douglas;
+- O uso dos recursos nativos digital e reconhecimento facial foram feitos por Yasmim;
+
+## API
+- É necessário ter Python instalado;
+- É necessário ter Flask instalado:
+  `pip install Flask`
+- Para rodar a API execute no diretório ..\lib\api:
+  `python app.py`
+
+## Faltante
+
+- Ajustes quanto ao SetState da apresentação dos produtos;
+- Melhorias visuais;
+- Correção de alguns bugs;
+
 ### Alunos
 
 - Douglas Baldon 1661809
