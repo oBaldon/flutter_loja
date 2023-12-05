@@ -10,9 +10,19 @@ class StorePage extends StatefulWidget {
 
 class _StorePageState extends State<StorePage> {
   final controller = StoreController();
+
+  Future<void> _loadData() async {
+    await controller.getProdutos();
+    print(controller.tabela[0].nome);
+  }
+
   @override
   void initState() {
     super.initState();
+
+    setState(() {
+      _loadData();
+    });
     controller.onSelectionChanged = () {
       setState(() {});
     };

@@ -3,10 +3,15 @@ import 'package:flutter_application/models/produto.dart';
 import 'package:http/http.dart' as http;
 
 class ProdutoAPI {
-  final String baseUrl = "http://localhost:5000";
+  var baseUrl = Uri(
+    scheme: 'http',
+    host: '192.168.1.53',
+    port: 8000,
+    path: '/produtos',
+  );
 
   Future<List<Produto>> getProdutos() async {
-    final response = await http.get(Uri.parse('$baseUrl/produtos'));
+    var response = await http.get(baseUrl);
 
     if (response.statusCode == 200) {
       List<dynamic> produtosJson = jsonDecode(response.body);
@@ -29,7 +34,13 @@ class ProdutoAPI {
   Future<void> adicionarProduto(Map<String, dynamic> produto) async {}
 
   Future<void> excluirProdutoPorNome(String nome) async {
-    final response = await http.delete(Uri.parse('$baseUrl/produtos/$nome'));
+    final response = await http.delete(
+      Uri.parse('$baseUrl/produtos/$nome'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
 
     if (response.statusCode != 200) {
       throw Exception('Falha ao excluir produto');
