@@ -41,7 +41,6 @@ class _AuthCheckState extends State<AuthCheck> {
             ));
       }
     } else {
-      // ignore: use_build_context_synchronously
       Navigator.push(
           context,
           MaterialPageRoute(
